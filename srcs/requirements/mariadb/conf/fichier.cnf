@@ -1,0 +1,15 @@
+[mysqld]
+datadir = /var/lib/mysql
+socket = /run/mysqld/mysqld.sock
+bind_address = 0.0.0.0
+port = 3306
+user = mysql
+
+
+
+#dans le fichier de configuration MySQL/MariaDB spécifie que le serveur de base de données doit s'exécuter sous l'utilisateur système mysql.
+#Spécifie le répertoire où les fichiers de données sont stockés. pour que mariadb puisse comuniquer
+#Définit le chemin du fichier de socket pour les connexions locales.
+#Définit l'adresse IP à laquelle le serveur est lié pour les connexions.
+#Définit le port sur lequel le serveur écoute les connexions.
+#cest le nom de lutilisateur avec lequelle on va lancer le daemon(Un processus continu qui maintient le serveur de base de données en fonctionnement)

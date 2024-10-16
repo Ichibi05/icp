@@ -1,0 +1,71 @@
+services:
+    mariadb:
+      container_name: mariadb
+      networks:
+        - inception
+      build:
+        context: requirements/mariadb
+        dockerfile: Dockerfile
+      volumes:
+        - mariadb:/var/lib/mysql
+      restart: unless-stopped
+      env_file: .env
+      expose:
+        - "3306"
+
+    nginx:
+      container_name: nginx
+      networks:
+        - inception
+      build:
+        context: requirements/nginx  
+        dockerfile: Dockerfile
+      volumes:
+        - wordpress:/var/www/wordpress
+      restart: on-failure
+      env_file: .env
+      ports:
+        - "443:443"
+      depends_on:
+        - wordpress
+   
+    wordpress:
+      container_name: wordpress
+      networks:
+        - inception
+      build:
+        context: requirements/wordpress
+        dockerfile: Dockerfile
+      volumes:
+        - wordpress:/var/www/wordpress
+      restart: on-failure
+      env_file: .env
+      expose:
+        - "9000"
+      depends_on:
+        - mariadb
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+        interval: 2s
+        timeout: 30s
+        retries: 10
+volumes:
+    wordpress:
+      driver: local
+      driver_opts:
+        type: 'none' #Indique qu'aucun type de système de fichiers spécifique n'est utilisé pour le volume.
+        o: 'bind' #Utilise un montage de liaison pour associer un répertoire spécifique de l'hôte à un répertoire dans le conteneur.
+        device: '/home/afromont/data/wordpress' # il montre à Docker quel dossier sur votre ordinateur utiliser à l'intérieur du conteneur.
+    mariadb:
+      driver: local
+      driver_opts:
+        type: 'none'
+        o: 'bind'
+        device: '/home/afromont/data/mariadb'
+
+networks:
+    inception:
+      driver: bridge
+      name: inception
+      
+#docker-compose up #docker-compose down, 
